@@ -9,7 +9,9 @@ import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class UI {
 
@@ -20,10 +22,10 @@ public class UI {
 
   private JFrame f;
   private JPanel p;
-  
+
   private static ArrayList<JTextField> paths;
   private static ArrayList<JButton> pathButtons;
-  
+
   public static GroupLayout layout;
 
   private UI(String windowName, int width, int height, int x, int y) {
@@ -34,11 +36,17 @@ public class UI {
 
     // Default settings
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    f.setVisible(true);
+    // Used so that frame will only be visible after everything is set up
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        f.setVisible(true);
+      }
+    });
 
     this.p = new JPanel();
 
-    f.setContentPane(this.p);
+    f.setContentPane(new JScrollPane(this.p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
   }
 
   public static UI createDefaultUI(String windowName) {
@@ -46,7 +54,7 @@ public class UI {
 
     paths = new ArrayList<>();
     pathButtons = new ArrayList<>();
-    
+
     addNewEmptyPath();
 
     layout = new GroupLayout(ui.getPanel());
@@ -64,12 +72,12 @@ public class UI {
     layout.setHorizontalGroup(constructHGroup());
     layout.setVerticalGroup(constructVGroup());
   }
-  
+
   public static Group constructHGroup() {
-    
+
     ParallelGroup pg1 = layout.createParallelGroup(); // Path text fields
     ParallelGroup pg2 = layout.createParallelGroup(); // Path buttons
-    
+
     for (int i=0; i<paths.size(); i++) {
       pg1.addComponent(paths.get(i), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
       pg2.addComponent(pathButtons.get(i));
@@ -78,7 +86,7 @@ public class UI {
     SequentialGroup sg = layout.createSequentialGroup();
     sg.addGroup(pg1);
     sg.addGroup(pg2);
-    
+
     return sg;
   }
 
@@ -88,15 +96,15 @@ public class UI {
       ParallelGroup tempGroup = layout.createParallelGroup();
       tempGroup.addComponent(paths.get(i), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
       tempGroup.addComponent(pathButtons.get(i));
-      
+
       pgList.add(tempGroup);
     }
-    
+
     SequentialGroup sg = layout.createSequentialGroup();
     for (ParallelGroup pg : pgList) {
       sg.addGroup(pg);
     }
-    
+
     return sg;
   }
 
@@ -107,14 +115,14 @@ public class UI {
 
     return gfx;
   }
-  
+
   public static JButton getNewPathButtonGfx() {
     JButton gfx = new JButton("...");
     gfx.addActionListener(new ExplorerListener());
-    
+
     return gfx;
   }
-  
+
   public static void addNewEmptyPath() {
     paths.add(getNewPathGfx());
     pathButtons.add(getNewPathButtonGfx());
