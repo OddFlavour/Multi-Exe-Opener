@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,8 +20,11 @@ public class UI {
 
   private JFrame f;
   private JPanel p;
+  
   private static ArrayList<JTextField> paths;
   private static ArrayList<JButton> pathButtons;
+  
+  public static GroupLayout layout;
 
   private UI(String windowName, int width, int height, int x, int y) {
     this.f = new JFrame(windowName);
@@ -42,55 +46,78 @@ public class UI {
 
     paths = new ArrayList<>();
     pathButtons = new ArrayList<>();
-    paths.add(getNewPathGraphics());
-    pathButtons.add(new JButton("..."));
-    paths.add(getNewPathGraphics());
-    pathButtons.add(new JButton("..."));
+    
+    addNewEmptyPath();
 
-    GroupLayout layout = new GroupLayout(ui.getPanel());
+    layout = new GroupLayout(ui.getPanel());
     ui.getPanel().setLayout(layout);
 
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
 
-    layout.setHorizontalGroup(constructHGroup(layout));
-    layout.setVerticalGroup(constructVGroup(layout));
+    constructLayout();
 
     return ui;
   }
 
-  public static Group constructHGroup(GroupLayout layout) {
-    ParallelGroup pg1 = layout.createParallelGroup();
-    pg1.addComponent(paths.get(0), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
-    pg1.addComponent(paths.get(1), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
+  public static void constructLayout() {
+    layout.setHorizontalGroup(constructHGroup());
+    layout.setVerticalGroup(constructVGroup());
+  }
+  
+  public static Group constructHGroup() {
     
-    ParallelGroup pg2 = layout.createParallelGroup();
-    pg2.addComponent(pathButtons.get(0));
-    pg2.addComponent(pathButtons.get(1));
+    ParallelGroup pg1 = layout.createParallelGroup(); // Path text fields
+    ParallelGroup pg2 = layout.createParallelGroup(); // Path buttons
     
-    return layout.createSequentialGroup()
-        .addGroup(pg1)
-        .addGroup(pg2)
-        ;
+    for (int i=0; i<paths.size(); i++) {
+      pg1.addComponent(paths.get(i), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
+      pg2.addComponent(pathButtons.get(i));
+    }
+
+    SequentialGroup sg = layout.createSequentialGroup();
+    sg.addGroup(pg1);
+    sg.addGroup(pg2);
+    
+    return sg;
   }
 
-  public static Group constructVGroup(GroupLayout layout) {
-    return layout.createSequentialGroup()
-        .addGroup(layout.createParallelGroup()
-            .addComponent(paths.get(0), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addComponent(pathButtons.get(0)))
-        .addGroup(layout.createParallelGroup()
-            .addComponent(paths.get(1), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addComponent(pathButtons.get(1)))
-        ;
+  public static Group constructVGroup() {
+    ArrayList<ParallelGroup> pgList = new ArrayList<>();
+    for (int i=0; i<paths.size(); i++) {
+      ParallelGroup tempGroup = layout.createParallelGroup();
+      tempGroup.addComponent(paths.get(i), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
+      tempGroup.addComponent(pathButtons.get(i));
+      
+      pgList.add(tempGroup);
+    }
+    
+    SequentialGroup sg = layout.createSequentialGroup();
+    for (ParallelGroup pg : pgList) {
+      sg.addGroup(pg);
+    }
+    
+    return sg;
   }
 
-  public static JTextField getNewPathGraphics() {
+  public static JTextField getNewPathGfx() {
     JTextField gfx = new JTextField();
     gfx.setEditable(false);
     gfx.setPreferredSize(new Dimension(500, 30));
 
     return gfx;
+  }
+  
+  public static JButton getNewPathButtonGfx() {
+    JButton gfx = new JButton("...");
+    gfx.addActionListener(new ExplorerListener());
+    
+    return gfx;
+  }
+  
+  public static void addNewEmptyPath() {
+    paths.add(getNewPathGfx());
+    pathButtons.add(getNewPathButtonGfx());
   }
 
   public JPanel getPanel() {

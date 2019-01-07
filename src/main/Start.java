@@ -1,8 +1,10 @@
 package main;
 
+import java.io.IOException;
+
 public class Start {
 
-  public static void main(String[] args) {
-    Program p = new Program();
+  public static void main(String[] args) throws IOException {
+    new Program();
   }
 }
