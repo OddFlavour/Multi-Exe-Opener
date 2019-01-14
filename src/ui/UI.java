@@ -25,9 +25,12 @@ public class UI {
 
   private static ArrayList<JTextField> paths;
   private static ArrayList<JButton> pathButtons;
+  
+  // TODO: this is not a good way to initialize it, in fact we don't even need a reference
+  private static JButton startButton = new JButton("Start");
 
   public static GroupLayout layout;
-
+  
   private UI(String windowName, int width, int height, int x, int y) {
     this.f = new JFrame(windowName);
 
@@ -78,12 +81,14 @@ public class UI {
     ParallelGroup pg1 = layout.createParallelGroup(); // Path text fields
     ParallelGroup pg2 = layout.createParallelGroup(); // Path buttons
 
+    pg1.addComponent(startButton);
+    
     for (int i=0; i<paths.size(); i++) {
       pg1.addComponent(paths.get(i), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
       pg2.addComponent(pathButtons.get(i));
     }
 
-    SequentialGroup sg = layout.createSequentialGroup();
+    Group sg = layout.createSequentialGroup();
     sg.addGroup(pg1);
     sg.addGroup(pg2);
 
@@ -100,7 +105,8 @@ public class UI {
       pgList.add(tempGroup);
     }
 
-    SequentialGroup sg = layout.createSequentialGroup();
+    Group sg = layout.createSequentialGroup();
+    sg.addComponent(startButton);
     for (ParallelGroup pg : pgList) {
       sg.addGroup(pg);
     }
@@ -112,6 +118,8 @@ public class UI {
     JTextField gfx = new JTextField();
     gfx.setEditable(false);
     gfx.setPreferredSize(new Dimension(500, 30));
+    
+    gfx.setName(String.valueOf(paths.size()));
 
     return gfx;
   }
@@ -119,6 +127,8 @@ public class UI {
   public static JButton getNewPathButtonGfx() {
     JButton gfx = new JButton("...");
     gfx.addActionListener(new ExplorerListener());
+    
+    gfx.setName(String.valueOf(pathButtons.size()));
 
     return gfx;
   }
