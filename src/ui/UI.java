@@ -137,6 +137,14 @@ public class UI {
     paths.add(getNewPathGfx());
     pathButtons.add(getNewPathButtonGfx());
   }
+  
+  public static ArrayList<JTextField> getPaths() {
+	  return paths;
+  }
+  
+  public static ArrayList<JButton> getPathButtons() {
+	  return pathButtons;
+  }
 
   public JPanel getPanel() {
     return this.p;

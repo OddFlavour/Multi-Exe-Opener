@@ -3,6 +3,8 @@ package ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class ExplorerListener implements ActionListener {
 
@@ -15,10 +17,20 @@ public class ExplorerListener implements ActionListener {
         ((JButton) action.getSource()).getName()
         );
 
-    if (!explored) {
-      UI.addNewEmptyPath();
-      UI.constructLayout();
-      explored = true;
+    JFileChooser chooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Executables", "exe");
+    chooser.setFileFilter(filter);
+    
+    int returnVal = chooser.showOpenDialog(null);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+	    if (!explored) {
+	      UI.addNewEmptyPath();
+	      UI.constructLayout();
+	      explored = true;
+	    }
+	    
+	    int index = Integer.parseInt(((JButton) action.getSource()).getName());
+	    UI.getPaths().get(index).setText(chooser.getSelectedFile().getAbsolutePath());
     }
   }
 
