@@ -58,6 +58,7 @@ public class UI {
     paths = new ArrayList<>();
     pathButtons = new ArrayList<>();
 
+    startButton.addActionListener(new StartListener());
     addNewEmptyPath();
 
     layout = new GroupLayout(ui.getPanel());
